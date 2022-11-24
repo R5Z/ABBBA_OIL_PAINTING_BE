@@ -1,12 +1,14 @@
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 import mimetypes
+from uuid import uuid4
+from PIL import Image
 import os
-from django.http import HttpResponse, Http404
+from django.http import FileResponse, HttpResponse, Http404
 import urllib
-from .models import Painting
 from painters.models import Painting, Painter
 from painters.serializers import ImageCreateSerializer
+from painters.serializers import ImageCreateSerializer, ConvertSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -15,10 +17,10 @@ from PIL import Image
 import os
 from painters.serializers import ImageCreateSerializer
 
-"""
+
 def Download_view(request, pk):
     painting = get_object_or_404(Painting, pk=pk)
-    url = painting.image.url[1:]
+    url = painting.painting.url[1:]
     file_url = urllib.parse.unquote(url)
     
     if os.path.exists(file_url):
@@ -26,9 +28,9 @@ def Download_view(request, pk):
             # quote_file_url = urllib.parse.quote(painting.filename.encode('utf-8'))
             response = HttpResponse(fh.read(), content_type=mimetypes.guess_type(file_url)[0])
             # response['Content-Disposition'] = 'attachment;filename*=UTF-8\'\'%s' % quote_file_url
-            return response
-        raise Http404
-"""    
+        return HttpResponse({"response":response, "href" : painting.painting})
+    raise Http404
+
     
 class ImageView(APIView) :
     permission_classes = [IsAuthenticated]
@@ -40,25 +42,24 @@ class ImageView(APIView) :
 
     def post(self, request):
         serializer = ImageCreateSerializer(data=request.data)
-        article = Painting()
+
+
         if serializer.is_valid():
-            serializer.save()
-
-        article.user = request.user
-        article.painter = Painting.objects.get(id=request.data['painter'])
-        article.style_id = serializer.data['id']
+            serializer.save(user_id=request.user.id) # save시에는 데이터베이스의 테이블의 필드명으로 들어간다. request로 보낼 때는 모델링의 필드명 기준으로 들어간다.
+  
         
-        image_uuid = uuid4().hex
-        image_painter = Painter.objects.get(id=request.data['painter']).image.name
-        print(image_painter)
-        print(serializer.data)
-        os.system('python style_transfer/cli.py media/'+ image_painter +' '+ serializer.data['image'][1:] +' -s 156 -ii 1 -o media/image/'+ image_uuid +'.png')
-        os.system('rembg i media/painting/'+ image_uuid +'.png media/painting/'+ image_uuid +'.png')
+        paint = Painting.objects.get(id=serializer.data["id"])
         
-        image = Image.open('media/uploads/painting/' + image_uuid + '.png')
-        article.image = 'result/' + image_uuid + '.png' #cv2
-        article.save()
-
+        painter_id = paint.painter_id
+        painter = Painter.objects.get(id=painter_id)
+        style = painter.style
         
 
-        return Response(article.data, status=status.HTTP_200_OK)
+        image_painter = str(style)
+        
+      
+        os.system(f"python3 /Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/painters/style_transfer/cli.py /Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/{serializer.data['picture'][1:]} /Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/media/{image_painter} -s 156 -ii 100")
+        
+        paint.painting = "/Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/out.png"
+        paint.save()
+        return Response({"message" : "변환이 완료되었습니다!"}, status=status.HTTP_200_OK)
