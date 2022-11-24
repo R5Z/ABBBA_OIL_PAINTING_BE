@@ -6,14 +6,15 @@ from PIL import Image
 import os
 from django.http import FileResponse, HttpResponse, Http404
 import urllib
-from .models import Painting, Painter
-from users.models import User
-from painters.models import Painting
+from painters.models import Painting, Painter
+from painters.serializers import ImageCreateSerializer
 from painters.serializers import ImageCreateSerializer, ConvertSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-
+from uuid import uuid4
+from PIL import Image
+import os
 from painters.serializers import ImageCreateSerializer
 
 
@@ -41,6 +42,8 @@ class ImageView(APIView) :
 
     def post(self, request):
         serializer = ImageCreateSerializer(data=request.data)
+
+
         if serializer.is_valid():
             serializer.save(user_id=request.user.id) # save시에는 데이터베이스의 테이블의 필드명으로 들어간다. request로 보낼 때는 모델링의 필드명 기준으로 들어간다.
   
@@ -60,4 +63,3 @@ class ImageView(APIView) :
         paint.painting = "/Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/out.png"
         paint.save()
         return Response({"message" : "변환이 완료되었습니다!"}, status=status.HTTP_200_OK)
-        

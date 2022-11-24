@@ -140,6 +140,7 @@ class Callback:
         return {'args': self.args.__dict__, 'iterates': self.iterates}
 
 
+# 이미지 제작 함수
 def main():
     setup_exceptions()
     fix_start_method()
