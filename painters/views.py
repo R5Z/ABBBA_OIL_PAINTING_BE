@@ -5,13 +5,14 @@ import os
 from django.http import HttpResponse, Http404
 import urllib
 from .models import Painting
-from users.models import User
-from painters.models import Painting
+from painters.models import Painting, Painter
 from painters.serializers import ImageCreateSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-
+from uuid import uuid4
+from PIL import Image
+import os
 from painters.serializers import ImageCreateSerializer
 
 """
@@ -32,11 +33,32 @@ def Download_view(request, pk):
 class ImageView(APIView) :
     permission_classes = [IsAuthenticated]
     
-    def post(self, request) :
-        serializer = ImageCreateSerializer(data = request.data)
-        if serializer.is_valid() :
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self,request):
+        draft = Painting.objects.all()
+        serializer = ImageCreateSerializer(draft, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-            
+    def post(self, request):
+        serializer = ImageCreateSerializer(data=request.data)
+        article = Painting()
+        if serializer.is_valid():
+            serializer.save()
+
+        article.user = request.user
+        article.painter = Painting.objects.get(id=request.data['painter'])
+        article.style_id = serializer.data['id']
+        
+        image_uuid = uuid4().hex
+        image_painter = Painter.objects.get(id=request.data['painter']).image.name
+        print(image_painter)
+        print(serializer.data)
+        os.system('python style_transfer/cli.py media/'+ image_painter +' '+ serializer.data['image'][1:] +' -s 156 -ii 1 -o media/image/'+ image_uuid +'.png')
+        os.system('rembg i media/painting/'+ image_uuid +'.png media/painting/'+ image_uuid +'.png')
+        
+        image = Image.open('media/uploads/painting/' + image_uuid + '.png')
+        article.image = 'result/' + image_uuid + '.png' #cv2
+        article.save()
+
+        
+
+        return Response(article.data, status=status.HTTP_200_OK)
