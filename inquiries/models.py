@@ -7,7 +7,7 @@ class Inquiry(models.Model):
     title = models.CharField(max_length=64)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    nickname =models.CharField(max_length=64)
     
 class Comment(models.Model) :
     user = models.ForeignKey(User, on_delete = models.CASCADE)
