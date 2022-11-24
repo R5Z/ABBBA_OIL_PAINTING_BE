@@ -17,3 +17,10 @@ class ImageCreateSerializer(serializers.ModelSerializer) :
         model = Painting
         fields = "__all__"
         read_only_fields=["user"]
+        
+class ConvertSerializer(serializers.ModelSerializer) :
+    
+    class Meta :
+        model = Painting
+        fields = "__all__"
+        
