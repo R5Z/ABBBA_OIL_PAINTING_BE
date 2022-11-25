@@ -2,7 +2,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from users.models import User
 import re
-from rest_framework.fields import CurrentUserDefault
+from painters.serializers import ImageCreateSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     # 패스워드 확인은 serialization하지 않는다.
@@ -102,3 +102,11 @@ class ProfileEditSerializer(serializers.ModelSerializer):
         edit.set_password(edit.password)
         edit.save()
         return edit
+
+class ProfileSerializer(serializers.ModelSerializer):
+    
+    painting_set = ImageCreateSerializer(many=True)
+
+    class Meta:
+        model = User
+        exclude = ("password",)

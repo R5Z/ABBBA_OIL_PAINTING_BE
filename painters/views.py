@@ -66,4 +66,3 @@ class ImageView(APIView) :
         painting = Painting.objects.filter(id=id)
         serializer = ImageCreateSerializer(painting, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    

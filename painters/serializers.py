@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from painters.models import Painting
-from users.serializers import UserSerializer
 from painters.models import Painting, Painter
 
 
@@ -22,5 +21,5 @@ class ConvertSerializer(serializers.ModelSerializer) :
     
     class Meta :
         model = Painting
-        fields = "__all__"
+        fields = ("painting",)
         
