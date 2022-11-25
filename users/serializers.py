@@ -3,6 +3,7 @@ from rest_framework import serializers
 from users.models import User
 import re
 from painters.serializers import ImageCreateSerializer
+from painters.models import Painting
 
 class UserSerializer(serializers.ModelSerializer):
     # 패스워드 확인은 serialization하지 않는다.
@@ -104,9 +105,7 @@ class ProfileEditSerializer(serializers.ModelSerializer):
         return edit
 
 class ProfileSerializer(serializers.ModelSerializer):
-    
-    painting_set = ImageCreateSerializer(many=True)
 
     class Meta:
-        model = User
-        exclude = ("password",)
+        model = Painting
+        fields = "__all__"

@@ -5,6 +5,14 @@ from rest_framework.generics import get_object_or_404
 from users.models import User
 from rest_framework.permissions import IsAuthenticated
 from users.serializers import UserSerializer, ProfileEditSerializer, ProfileSerializer
+from rest_framework.pagination import PageNumberPagination
+from painters.models import Painting
+from users.pagination import PaginationHandlerMixin
+
+
+class ListPagination(PageNumberPagination) :
+    page_size_query_param = "limit"
+    
 
 
 
@@ -25,14 +33,23 @@ class UserView(APIView):
             return Response({"message":"지금까지 저희 서비스를 이용해 주셔서 감사합니다."}, status=status.HTTP_200_OK)
         return Response({"message":"이런... 탈퇴에 실패하셨습니다."}, status=status.HTTP_400_BAD_REQUEST)
     
-class ProfileView(APIView) :
+class ProfileView(APIView, PaginationHandlerMixin) :
     permission_classes = [IsAuthenticated]
     
+    pagination_class = ListPagination
+    serializer_class = ProfileSerializer
+    
     # 프로필 보기
-    def get(self, request) :
-        user = get_object_or_404(User, id=request.user.id)
-        serializer = ProfileSerializer(user)
-        return Response(serializer.data)
+    def get(self, request, format=None, *args, **kwargs) :
+        paintings = Painting.objects.filter(user=request.user.id)
+        page = self.paginate_queryset(paintings)
+        # serializer = self.serializer_class(paintings, many=True)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+        if page is not None : 
+            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+        else :
+            serializer = self.serializer_class(paintings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
     # 닉네임과 비밀번호 변경
     def put(self, request) :
