@@ -50,13 +50,14 @@ class ConvertView(APIView) :
         
 
         image_painter = str(style)
+        image_uuid = uuid4().hex
+        # style transfer 명령어 python cli.py 변환하고자하는이미지 변환하고자하는스타일 -s 사이즈 --initial-iterations 정확도(50전후로) -o 저장하고자하는파일명과 경로
+        path = os.getcwd()
+        os.system(f"python3 {path}/painters/style_transfer/cli.py {path}/{serializer.data['picture'][1:]} {path}/media/{image_painter} -s 156 -ii 100 -o {path}/media/uploads/painting/{image_uuid}.png")
         
-      
-        os.system(f"python3 /Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/painters/style_transfer/cli.py /Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/{serializer.data['picture'][1:]} /Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/media/{image_painter} -s 156 -ii 100")
-        
-        paint.painting = "/Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/out.png"
+        paint.painting = f"/uploads/painting/{image_uuid}.png"
         paint.save()
-        return Response({"message" : "변환이 완료되었습니다!"}, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ImageView(APIView) :
