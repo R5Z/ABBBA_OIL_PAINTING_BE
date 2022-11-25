@@ -106,6 +106,11 @@ class ProfileEditSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
 
+    user = serializers.SerializerMethodField() 
+    
+    def get_user(self, obj) :
+        return obj.user.nickname
+    
     class Meta:
         model = Painting
         fields = "__all__"
