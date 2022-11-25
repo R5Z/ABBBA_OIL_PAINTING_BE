@@ -32,13 +32,7 @@ def Download_view(request, pk):
     raise Http404
 
     
-class ImageView(APIView) :
-    permission_classes = [IsAuthenticated]
-    
-    def get(self,request):
-        draft = Painting.objects.all()
-        serializer = ImageCreateSerializer(draft, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class ConvertView(APIView) :
 
     def post(self, request):
         serializer = ImageCreateSerializer(data=request.data)
@@ -63,3 +57,13 @@ class ImageView(APIView) :
         paint.painting = "/Users/lgb/Desktop/ABBBA_OIL_PAINTING_BE/out.png"
         paint.save()
         return Response({"message" : "변환이 완료되었습니다!"}, status=status.HTTP_200_OK)
+
+
+class ImageView(APIView) :
+    permission_classes = [IsAuthenticated]
+    
+    def get(self,request,id):
+        painting = Painting.objects.filter(id=id)
+        serializer = ImageCreateSerializer(painting, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
