@@ -204,7 +204,7 @@ EMAIL_HOST = 'smtp.naver.com'
 EMAIL_PORT = '587'
 
 # 발신할 이메일
-# EMAIL_HOST_USER = '구글아이디@gmail.com'
+# EMAIL_HOST_USER = 'email'
 EMAIL_HOST_USER = 'kmg6381@naver.com'
 
 # 발신할 메일의 비밀번호

@@ -8,16 +8,13 @@ from users.serializers import UserSerializer, ProfileEditSerializer, ProfileSeri
 from rest_framework.pagination import PageNumberPagination
 from painters.models import Painting
 from users.pagination import PaginationHandlerMixin
-from django.core.mail.message import EmailMessage
 from django.shortcuts import render
-from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.views import PasswordResetView
 
 
 class ListPagination(PageNumberPagination) :
     page_size_query_param = "limit"
     
-
-
 
 class UserView(APIView):  
     def post(self, request):
@@ -46,8 +43,6 @@ class ProfileView(APIView, PaginationHandlerMixin) :
     def get(self, request, format=None, *args, **kwargs) :
         paintings = Painting.objects.filter(user=request.user.id)
         page = self.paginate_queryset(paintings)
-        # serializer = self.serializer_class(paintings, many=True)
-        # return Response(serializer.data, status=status.HTTP_200_OK)
         if page is not None : 
             serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
         else :

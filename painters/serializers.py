@@ -1,16 +1,11 @@
 from rest_framework import serializers
 from painters.models import Painting
-from painters.models import Painting, Painter
+from painters.models import Painting
 
 
-# class PainterSerializer(serializers.ModelSerializer) :
-    
-#     class Meta :
-#         model = Painter
-#         fields = "__all__"
+
 
 class ImageCreateSerializer(serializers.ModelSerializer) :
-    # painter = PainterSerializer(many=True)
     
     class Meta :
         model = Painting

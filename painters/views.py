@@ -2,22 +2,20 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 import mimetypes
 from uuid import uuid4
-from PIL import Image
 import os
-from django.http import FileResponse, HttpResponse, Http404
+from django.http import HttpResponse, Http404
 import urllib
 from painters.models import Painting, Painter
 from painters.serializers import ImageCreateSerializer
-from painters.serializers import ImageCreateSerializer, ConvertSerializer
+from painters.serializers import ImageCreateSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from uuid import uuid4
-from PIL import Image
 import os
 from painters.serializers import ImageCreateSerializer
 
-
+#아직 미구현. 추후에 추가 예정.
 def Download_view(request, pk):
     painting = get_object_or_404(Painting, pk=pk)
     url = painting.painting.url[1:]
@@ -25,9 +23,7 @@ def Download_view(request, pk):
     
     if os.path.exists(file_url):
         with open(file_url, 'rb') as fh:
-            # quote_file_url = urllib.parse.quote(painting.filename.encode('utf-8'))
             response = HttpResponse(fh.read(), content_type=mimetypes.guess_type(file_url)[0])
-            # response['Content-Disposition'] = 'attachment;filename*=UTF-8\'\'%s' % quote_file_url
         return HttpResponse({"response":response, "href" : painting.painting})
     raise Http404
 
