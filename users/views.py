@@ -8,6 +8,9 @@ from users.serializers import UserSerializer, ProfileEditSerializer, ProfileSeri
 from rest_framework.pagination import PageNumberPagination
 from painters.models import Painting
 from users.pagination import PaginationHandlerMixin
+from django.core.mail.message import EmailMessage
+from django.shortcuts import render
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 
 
 class ListPagination(PageNumberPagination) :
@@ -61,3 +64,26 @@ class ProfileView(APIView, PaginationHandlerMixin) :
                 return Response({"message":"변경 완료!"}, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({"message":"본인만 수정할 수 있습니다"}, stauts=status.HTTP_403_FORBIDDEN)
+
+    
+    
+class UserPasswordResetView(PasswordResetView):
+
+    def form_valid(self, form):
+        if User.objects.filter(email=self.request.POST.get("email")).exists():
+            opts = {
+                'use_https': self.request.is_secure(),
+                'token_generator': self.token_generator,
+                'from_email': self.from_email,
+                'email_template_name': self.email_template_name,
+                'subject_template_name': self.subject_template_name,
+                'request': self.request,
+                'html_email_template_name': self.html_email_template_name,
+                'extra_email_context': self.extra_email_context,
+            }
+            form.save(**opts)
+            return super().form_valid(form)
+        else:
+            return render(self.request, 'password_reset_done_fail.html')
+        
+        
