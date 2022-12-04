@@ -1,5 +1,6 @@
 </br>
 <p align="center"><img width="671" alt="Screen Shot 2022-11-28 at 10 15 30 AM" src="https://user-images.githubusercontent.com/18550082/204172506-4d73abb6-f2cc-4a5c-9655-856d9465899a.png"></p>
+</br>
 
 ## Marvel Pics
 </br>
@@ -10,7 +11,6 @@
 - FE Repository Info: [https://github.com/GeumBinLee/ABBBA_OIL_PAINTING_FE](https://github.com/GeumBinLee/ABBBA_OIL_PAINTING_FE)
 
 </br></br>
-</br>
 
 #### **프로젝트 개요**
 
@@ -37,15 +37,47 @@
 ![Untitled](https://user-images.githubusercontent.com/18550082/204173260-8fda2295-a6d9-4099-9192-5eec3df8bb6e.png)
 </br></br></br>
 
->### API
-#### 수정 완료된 명세 이미지만 첨부하시면 됩니다.
-</br></br></br>
-
-
 >### DB Modeling
 <img width="1346" alt="Screen Shot 2022-11-28 at 12 53 41 PM" src="https://user-images.githubusercontent.com/18550082/204190643-ce19efb7-2afd-43aa-baf3-6f41d89d8045.png"></br></br></br>
+
+>### API 
+API Design Link https://www.notion.so/63559b58fa96468b96c2178384521ba3?v=b78dfab7582a43daaf02a7e33a500f17
+
+<img width="1346" src="https://user-images.githubusercontent.com/18550082/205481608-06e3f979-cac9-4e33-8f5d-4304712abe12.png">
 </br></br></br>
 
+
+>### Structure
+```
+┌─OIL_PAINTING
+├── oli_painting        // project
+│   ├── urls.py         // base url
+│   ├── settings.py     // setting
+│   └── ...
+├── inquiries           // app
+│   ├── models.py       // DB Model - inquiry, comment
+│   ├── views.py        // View Functions
+│   ├── serializers.py  // Serializers
+│   ├── tests.py        
+│   ├── urls.py         // inquiry url
+│   └── ...
+├── painters            // app
+│   ├── style_transfer  // AI style transfer
+│   ├── models.py       // DB Model - painter, painting
+│   ├── views.py        // View Functions
+│   ├── serializers.py  // Serializers
+│   ├── tests.py        
+│   └── ...
+├── user                // app
+│   ├── models.py       // DB Model - user
+│   ├── views.py        // View Functions
+│   ├── serializers.py  // Serializers
+│   ├── tests.py        // Test Code
+│   └── ...
+├── **manage.py**        
+└── requirements.txt
+```
+</br></br></br>
 
 >### 프로젝트 주요 기능
 
@@ -79,6 +111,6 @@
 #### 메인 페이지
 
 <img width="320" alt="Screen Shot 2022-11-28 at 10 00 37 AM" src="https://user-images.githubusercontent.com/18550082/204173747-32490d64-dbd1-43fc-9dbc-d9c8b1feb49d.png"> <img width="320" alt="Screen Shot 2022-11-28 at 10 00 54 AM" src="https://user-images.githubusercontent.com/18550082/204173750-56d434eb-ee57-4be0-9743-96bfab6240d7.png"> <img width="320" alt="Screen Shot 2022-11-28 at 10 01 14 AM" src="https://user-images.githubusercontent.com/18550082/204173754-60a6da93-de64-4d00-9278-3c9b731449e3.png">
-</br>
+</br></br></br>
 
 
